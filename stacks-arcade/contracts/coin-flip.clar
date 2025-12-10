@@ -96,6 +96,7 @@
         )
         (begin
           (unwrap! (stx-transfer? wager tx-sender contract-principal) err-transfer-failed)
+          (map-set games {id: game-id} (merge game {funded: true}))
           (ok true))))
     err-not-found))
 
