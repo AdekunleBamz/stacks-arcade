@@ -132,6 +132,7 @@
             (updated (merge game {status: status-settled, result: (some result), winner: winner}))
           )
           (map-set games {id: game-id} updated)
+          (print {event: "flip", id: game-id, player: tx-sender, result: result, winner: winner, payout: payout})
           (if (> payout u0)
             (let
               (
