@@ -143,6 +143,7 @@
     (
       (amount (default-to u0 (get amount (map-get? balances {player: tx-sender}))))
     )
+    (asserts! (> amount u0) err-zero-claim)
     (ok true)))
 
 ;; read only functions
