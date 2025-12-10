@@ -99,6 +99,11 @@
           (map-set games {id: game-id} (merge game {funded: true}))
           (ok true))))
     err-not-found))
+(define-public (cancel-game (game-id uint))
+  (match (map-get? games {id: game-id})
+    game
+    (ok true)
+    err-not-found))
 
 ;; read only functions
 ;;
