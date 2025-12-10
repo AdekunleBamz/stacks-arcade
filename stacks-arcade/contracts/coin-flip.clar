@@ -11,6 +11,8 @@
 
 ;; constants
 ;;
+(define-constant contract-version "0.0.1")
+(define-constant contract-admin none) ;; reserved for future controls
 
 ;; data vars
 ;;
