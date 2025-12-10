@@ -108,6 +108,7 @@
       (asserts! (is-eq tx-sender (get player game)) err-not-player)
       (asserts! (is-open? (get status game)) err-not-open)
       (asserts! (not (get funded game)) err-already-funded)
+      (print {event: "cancel", id: game-id, player: tx-sender})
       (map-set games {id: game-id} (merge game {status: status-canceled}))
       (ok true))
     err-not-found))
