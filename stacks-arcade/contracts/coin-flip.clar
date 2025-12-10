@@ -92,7 +92,7 @@
       (asserts! (not (get funded game)) err-already-funded)
       (let
         (
-          (contract-principal (as-contract tx-sender))
+          (contract-principal (as-contract tx-sender tx-sender))
           (wager (get wager game))
         )
         (begin
