@@ -109,6 +109,11 @@
       (map-set games {id: game-id} (merge game {status: status-canceled}))
       (ok true))
     err-not-found))
+(define-public (flip (game-id uint))
+  (match (map-get? games {id: game-id})
+    game
+    (ok true)
+    err-not-found))
 
 ;; read only functions
 ;;
