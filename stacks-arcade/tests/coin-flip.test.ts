@@ -28,12 +28,7 @@ describe("coin-flip", () => {
   });
 
   it("rejects wagers above maximum", () => {
-    const { result } = simnet.callPublicFn(
-      "coin-flip",
-      "create-game",
-      [simnet.uint(100_000_001n), simnet.uint(0)],
-      address1
-    );
+    const { result } = create(100_000_001n, 0n);
     expect(result).toBeErr();
   });
 
