@@ -85,6 +85,12 @@ describe("coin-flip", () => {
     expect(result).toBeErr();
   });
 
+  it("cannot flip before funding", () => {
+    create(1_000_000n, 0n);
+    const { result } = flip(0n);
+    expect(result).toBeErr();
+  });
+
   // it("shows an example", () => {
   //   const { result } = simnet.callReadOnlyFn("counter", "get-counter", [], address1);
   //   expect(result).toBeUint(0);
