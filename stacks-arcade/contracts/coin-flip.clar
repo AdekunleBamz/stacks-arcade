@@ -130,7 +130,11 @@
           )
           (map-set games {id: game-id} updated)
           (if (> payout u0)
-            (ok true)
+            (let
+              (
+                (current (default-to u0 (get amount (map-get? balances {player: player}))))
+              )
+              (map-set balances {player: player} {amount: (+ current payout)}))
             (ok true))
           (ok {result: result, winner: winner}))))
     err-not-found))
