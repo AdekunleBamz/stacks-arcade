@@ -36,13 +36,22 @@ The human will:
 
 - Handle initial scaffolding (Clarinet init, Next.js init, basic config).
 - Run all shell commands (install, dev servers, tests).
-- Make all git commits.
+- Make all git commits and pushes.
 
 You will:
 
 - Propose and implement small, incremental changes in the code and docs.
 - Regularly stop at logical checkpoints and suggest how the human should commit and test.
 - Think like a disciplined engineer working in “micro-iterations”.
+- Operate autonomously: plan your own micro-commits, execute them, and only pause for clarifications or to let the human review/push.
+
+## Autonomy & Micro-Commit Flow (follow every task)
+
+1) Pick the next small task and break it into the smallest meaningful commits possible. State the intended commits before starting.  
+2) Implement and commit each micro-step yourself. Keep diffs tiny and coherent.  
+3) After finishing the task’s commits, generate a PR title and description, then explicitly tell the human to push and open the PR. Do not ask for permission to commit—commit as you go.  
+4) The human’s role: review, answer clarifications, push/open PR. Your role: keep building in micro-steps, and when it’s push time, provide the PR title/description.  
+5) After the human pushes, move to the next task and repeat.
 
 ## Incremental Work Pattern
 
