@@ -57,19 +57,28 @@ throw new Error(`Game ${gameId} not found`);
 }
 return (entry as SomeCV<TupleCV>).value;
 };
+// Helper function to play games until a win is achieved
+// Alternates between heads (0) and tails (1) to ensure a win eventually
+// Mines empty blocks between attempts to change block-height/time for randomness
 const playUntilWin = (wager: bigint) => {
 let attempt = 0;
 while (attempt < 6) {
+// Alternate pick between 0 and 1 each attempt
 const pick = attempt % 2;
+// Create and fund a new game
 const gameId = createAndFundGame(pick, wager, wallet1);
+// Execute the flip
 const flip = simnet.callPublicFn(contractName, "flip", [Cl.uint(gameId)],wallet1);
 expect(flip.result).toHaveClarityType(ClarityType.ResponseOk);
+// Check if this flip resulted in a win
 const gameEntry = getGameTuple(gameId);
 const winner = (gameEntry.value.winner as any).type ===
 ClarityType.BoolTrue;
 if (winner) {
+// Return the winning game details
 return { gameId, gameEntry, pick };
 }
+// Mine a block to change block-height/time for next attempt's randomness
 simnet.mineEmptyStacksBlock();
 attempt += 1;
 }
