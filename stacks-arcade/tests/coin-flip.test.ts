@@ -172,13 +172,19 @@ wallet1,);
 const expectedPayout = winner ? wager * 2n : 0n;
 expect(owed.result).toBeUint(expectedPayout);
 });
+// Test that claiming a winning payout transfers funds and clears the balance
 it("claims a winning payout and clears owed balance", () => {
+// Fund the contract for payouts
 fundContract(10_000_000n);
 const wager = minBet;
+// Play until we get a winning game (alternates picks until win)
 const { gameId, gameEntry, pick } = playUntilWin(wager);
+// Extract the result value from the game entry
 const resultValue = (gameEntry.value.result as
 SomeCV<UIntCV>).value.value;
+// Verify this was a winning game
 expect((gameEntry.value.winner as any).type).toBe(ClarityType.BoolTrue);
+// Verify the game state is correct
 expect(gameEntry).toEqual(
 Cl.tuple({
 id: Cl.uint(gameId),
