@@ -96,7 +96,9 @@ wallet1,
 );
 // Expect error code 103 (err-invalid-pick)
 expect(res.result).toBeErr(Cl.uint(103));});
+// Test that only the game creator can fund their own game
 it("requires the player to fund their own game", () => {
+// Create a game with wallet1
 const create = simnet.callPublicFn(
 contractName,
 "create-game",
@@ -105,13 +107,16 @@ wallet1,
 );
 expect(create.result).toBeOk(Cl.uint(0));
 const gameId = extractGameId(create.result as any);
+// Try to fund the game with wallet2 (different player - should fail)
 const fund = simnet.callPublicFn(
 contractName,
 "fund-game",
 [Cl.uint(gameId)],
 wallet2,
 );
+// Expect error code 104 (err-not-player)
 expect(fund.result).toBeErr(Cl.uint(104));
+// Verify the game was not funded (funded should still be false)
 const gameEntry = getGameTuple(gameId);expect(gameEntry).toEqual(
 Cl.tuple({
 id: Cl.uint(gameId),
