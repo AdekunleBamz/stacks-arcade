@@ -122,3 +122,25 @@
         (var-set next-game-id (+ game-id u1))
         (print {event: "play", id: game-id, player: tx-sender, guess: guess, draw: draw, winner: winner, payout: payout})
         (ok {draw: draw, winner: winner})))))
+
+(define-public (claim)
+  (let ((amount (default-to u0 (get amount (map-get? balances {player: tx-sender})))))
+    (asserts! (> amount u0) err-zero-claim)
+    (let ((recipient tx-sender))
+      (unwrap! (as-contract? ((with-stx amount)) (try! (stx-transfer? amount tx-sender recipient))) err-transfer)
+      (map-set balances {player: tx-sender} {amount: u0})
+      (print {event: "claim", player: recipient, amount: amount})
+      (ok true))))
+
+;; read-only functions
+(define-read-only (get-next-game-id)
+  (var-get next-game-id))
+
+(define-read-only (get-game (game-id uint))
+  (map-get? games {id: game-id}))
+
+(define-read-only (get-balance (who principal))
+  (default-to u0 (get amount (map-get? balances {player: who}))))
+
+(define-read-only (get-version)
+  contract-version)
