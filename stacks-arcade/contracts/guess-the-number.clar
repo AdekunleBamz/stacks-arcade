@@ -42,6 +42,7 @@
     (map-set balances {player: player} {amount: (+ current amount)})))
 
 (define-private (draw-number)
+  ;; simple, predictable draw for demo purposes only
   (mod (+ stacks-block-height stacks-block-time) (+ max-number u1)))
 
 ;; public functions
