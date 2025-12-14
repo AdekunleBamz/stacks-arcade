@@ -39,6 +39,32 @@ describe("emoji-battle", () => {
     expect(res.result).toBeErr(Cl.uint(400));
   });
 
+  it("rejects invalid emoji on join", () => {
+    const gameId = createGame(wallet1, "fire");
+    const res = simnet.callPublicFn(
+      contractName,
+      "join-game",
+      [Cl.uint(gameId), Cl.stringAscii("invalid")],
+      wallet2,
+    );
+    expect(res.result).toBeErr(Cl.uint(400));
+  });
+
+  it("prevents a creator from joining their own game", () => {
+    const gameId = createGame(wallet1, "water");
+    const res = simnet.callPublicFn(
+      contractName,
+      "join-game",
+      [Cl.uint(gameId), Cl.stringAscii("fire")],
+      wallet1,
+    );
+    expect(res.result).toBeErr(Cl.uint(405));
+
+    const game = getGameTuple(gameId);
+    expect(game.value.status).toEqual(Cl.uint(0));
+    expect(game.value.challenger).toBeNone();
+  });
+
   it("settles a battle with a clear winner", () => {
     // fire beats leaf
     const gameId = createGame(wallet1, "fire");
@@ -76,6 +102,28 @@ describe("emoji-battle", () => {
     expect(challengerBalance.result).toBeUint(0);
   });
 
+  it("blocks additional challengers once a game is settled", () => {
+    const gameId = createGame(wallet1, "fire");
+    const firstJoin = simnet.callPublicFn(
+      contractName,
+      "join-game",
+      [Cl.uint(gameId), Cl.stringAscii("leaf")],
+      wallet2,
+    );
+    expect(firstJoin.result).toBeOk(Cl.tuple({ result: Cl.stringAscii("creator"), winner: Cl.some(Cl.standardPrincipal(wallet1)) }));
+
+    const secondJoin = simnet.callPublicFn(
+      contractName,
+      "join-game",
+      [Cl.uint(gameId), Cl.stringAscii("water")],
+      wallet1,
+    );
+    expect(secondJoin.result).toBeErr(Cl.uint(403));
+
+    const game = getGameTuple(gameId);
+    expect(game.value.status).toEqual(Cl.uint(1));
+  });
+
   it("refunds both players on a tie", () => {
     const gameId = createGame(wallet1, "water");
     const join = simnet.callPublicFn(
@@ -104,6 +152,11 @@ describe("emoji-battle", () => {
       wallet2,
     );
     expect(challengerBalance.result).toBeUint(stake);
+  });
+
+  it("rejects a claim when balance is zero", () => {
+    const claim = simnet.callPublicFn(contractName, "claim", [], wallet2);
+    expect(claim.result).toBeErr(Cl.uint(408));
   });
 
   it("allows creator to cancel before a challenger joins and claim refund", () => {
