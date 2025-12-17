@@ -76,6 +76,7 @@ const playUntilWin = (wager: bigint, maxAttempts = 20) => {
 };
 
 describe("guess-the-number", () => {
+  
   it("rejects out-of-range guesses", () => {
     const res = simnet.callPublicFn(
       contractName,
@@ -85,6 +86,24 @@ describe("guess-the-number", () => {
     );
     expect(res.result).toBeErr(Cl.uint(400));
   });
-}
 
-)
+  it("rejects bets below and above limits", () => {
+    const low = simnet.callPublicFn(
+      contractName,
+      "play",
+      [Cl.uint(minBet - 1n), Cl.uint(0)],
+      player
+    );
+    expect(low.result).toBeErr(Cl.uint(401));
+    const high = simnet.callPublicFn(
+      contractName,
+      "play",
+      [Cl.uint(maxBet + 1n), Cl.uint(0)],
+      player
+    );
+    expect(high.result).toBeErr(Cl.uint(402));
+  })
+
+
+
+})
