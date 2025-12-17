@@ -63,3 +63,14 @@ const playOnce = (wager: bigint, guess: number) => {
     winner: game.value.winner.type === ClarityType.BoolTrue,
   };
 };
+const playUntilWin = (wager: bigint, maxAttempts = 20) => {
+  let attempt = 0;
+  while (attempt < maxAttempts) {
+    const guess = attempt % (maxNumber + 1);
+    const play = playOnce(wager, guess);
+    if (play.winner) return play;
+    simnet.mineEmptyStacksBlock();
+    attempt += 1;
+  }
+  throw new Error("Could not find a winning draw within attempts");
+};
