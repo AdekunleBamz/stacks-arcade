@@ -38,3 +38,28 @@ const getBalance = (addr: string) => {
   expect(res.result.type).toBe(ClarityType.UInt);
   return (res.result as UIntCV).value;
 };
+
+const playOnce = (wager: bigint, guess: number) => {
+  const beforeId = nextGameId();
+  const res = simnet.callPublicFn(
+    contractName,
+    "play",
+    [Cl.uint(wager), Cl.uint(guess)],
+    player
+  );
+  expect(res.result).toHaveClarityType(ClarityType.ResponseOk);
+  const game = getGame(beforeId);
+  expect(game.value.id).toStrictEqual(Cl.uint(beforeId));
+  expect(game.value.player).toStrictEqual(Cl.standardPrincipal(player));
+  expect((game.value.guess as UIntCV).value).toStrictEqual(
+    Cl.uint(guess).value
+  );
+  expect((game.value.draw as UIntCV).value).toBeLessThanOrEqual(
+    BigInt(maxNumber)
+  );
+  return {
+    gameId: beforeId,
+    draw: Number((game.value.draw as UIntCV).value),
+    winner: game.value.winner.type === ClarityType.BoolTrue,
+  };
+};
