@@ -76,7 +76,6 @@ const playUntilWin = (wager: bigint, maxAttempts = 20) => {
 };
 
 describe("guess-the-number", () => {
-  
   it("rejects out-of-range guesses", () => {
     const res = simnet.callPublicFn(
       contractName,
@@ -102,8 +101,14 @@ describe("guess-the-number", () => {
       player
     );
     expect(high.result).toBeErr(Cl.uint(402));
-  })
+  });
 
-
-
-})
+  it("records games and increments ids", () => {
+    const startId = nextGameId();
+    const { gameId } = playOnce(minBet, 0);
+    expect(gameId).toBe(startId);
+    const nextId = nextGameId();
+    expect(nextId).toBe(startId + 1);
+  });
+  
+});
